@@ -29,8 +29,10 @@ type {{$name}}QueryParam struct {
 	util.PaginationParam
 	{{if $treeTpl}}InIDs []string `form:"-"`{{- end}}
 	{{- range .Fields}}{{$fieldName := .Name}}{{$type :=.Type}}
-	{{- with .Query}}
+	{{- range .Query}}
+	{{- with .}}
 	{{.Name}} {{$type}} `form:"{{with .FormTag}}{{.}}{{else}}-{{end}}"{{with .BindingTag}} binding:"{{.}}"{{end}}{{with .CustomTag}} {{raw .}}{{end}}`{{with .Comment}}// {{.}}{{end}}
+	{{- end}}
 	{{- end}}
 	{{- end}}
 }

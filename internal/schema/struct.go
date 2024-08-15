@@ -57,7 +57,7 @@ func (a *S) Format() *S {
 				Type:    "string",
 				GormTag: "size:20;index;",
 				Comment: "Parent ID",
-				Query:   &FieldQuery{},
+				Query:   []*FieldQuery{},
 				Form:    &FieldForm{},
 			})
 			fields = append(fields, &Field{
@@ -65,10 +65,12 @@ func (a *S) Format() *S {
 				Type:    "string",
 				GormTag: "size:255;index;",
 				Comment: "Parent path (split by .)",
-				Query: &FieldQuery{
-					Name: "ParentPathPrefix",
-					OP:   "LIKE",
-					Args: `v + "%"`,
+				Query: []*FieldQuery{
+					{
+						Name: "ParentPathPrefix",
+						OP:   "LIKE",
+						Args: `v + "%"`,
+					},
 				},
 			})
 			fields = append(fields, &Field{
@@ -134,7 +136,7 @@ type Field struct {
 	JSONTag   string                 `yaml:"json_tag,omitempty" json:"json_tag,omitempty"`
 	CustomTag string                 `yaml:"custom_tag,omitempty" json:"custom_tag,omitempty"`
 	Comment   string                 `yaml:"comment,omitempty" json:"comment,omitempty"`
-	Query     *FieldQuery            `yaml:"query,omitempty" json:"query,omitempty"`
+	Query     []*FieldQuery          `yaml:"query,omitempty" json:"query,omitempty"`
 	Order     string                 `yaml:"order,omitempty" json:"order,omitempty"`
 	Form      *FieldForm             `yaml:"form,omitempty" json:"form,omitempty"`
 	Unique    bool                   `yaml:"unique,omitempty" json:"unique,omitempty"`
@@ -153,18 +155,20 @@ func (a *Field) Format() *Field {
 		a.JSONTag = utils.ToLowerUnderlinedNamer(a.Name)
 	}
 
-	if a.Query != nil {
-		if a.Query.Name == "" {
-			a.Query.Name = a.Name
-		}
-		if a.Query.Comment == "" {
-			a.Query.Comment = a.Comment
-		}
-		if a.Query.InQuery && a.Query.FormTag == "" {
-			a.Query.FormTag = utils.ToLowerCamel(a.Name)
-		}
-		if a.Query.OP == "" {
-			a.Query.OP = "="
+	for _, query := range a.Query {
+		if query != nil {
+			if query.Name == "" {
+				query.Name = a.Name
+			}
+			if query.Comment == "" {
+				query.Comment = a.Comment
+			}
+			if query.InQuery && query.FormTag == "" {
+				query.FormTag = utils.ToLowerCamel(a.Name)
+			}
+			if query.OP == "" {
+				query.OP = "="
+			}
 		}
 	}
 

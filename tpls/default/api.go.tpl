@@ -22,9 +22,11 @@ type {{$name}} struct {
 // @Param pageSize query int true "pagination size" default(10)
 {{- end}}
 {{- range .Fields}}{{$fieldType := .Type}}
-{{- with .Query}}
+{{- range .Query}}
+{{- with .}}
 {{- if .InQuery}}
 // @Param {{.FormTag}} query {{convSwaggerType $fieldType}} false "{{.Comment}}"
+{{- end}}
 {{- end}}
 {{- end}}
 {{- end}}

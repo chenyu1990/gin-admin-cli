@@ -24,6 +24,34 @@ type {{$name}} struct {
 	DB *gorm.DB
 }
 
+func (a *{{$name}}) getQueryOption(opts ...schema.{{$name}}QueryOptions) schema.{{$name}}QueryOptions {
+	var opt schema.{{$name}}QueryOptions
+	if len(opts) > 0 {
+		opt = opts[0]
+	}
+	return opt
+}
+
+func (a *{{$name}}) where(ctx context.Context, db *gorm.DB, params *schema.{{$name}}QueryParam) *gorm.DB {
+	{{- if $treeTpl}}
+	if v:= params.InIDs; len(v) > 0 {
+		db = db.Where("id IN ?", v)
+	}
+	{{- end}}
+
+    {{- range .Fields}}{{$type := .Type}}{{$fieldName := .Name}}
+    {{- range .Query}}
+    {{- with .}}
+	if v := params.{{.Name}}; {{with .IfCond}}{{.}}{{else}}{{convIfCond $type}}{{end}} {
+		db = db.Where("`{{lowerUnderline $fieldName}}` {{.OP}} {{if eq .OP "IN"}}(?){{else}}?{{end}}", {{if .Args}}{{raw .Args}}{{else}}{{if eq .OP "LIKE"}}"%"+v+"%"{{else}}v{{end}}{{end}})
+	}
+    {{- end}}
+    {{- end}}
+    {{- end}}
+
+	return db
+}
+
 // Query {{lowerSpacePlural .Name}} from the database based on the provided parameters and options.
 func (a *{{$name}}) Query(ctx context.Context, params schema.{{$name}}QueryParam, opts ...schema.{{$name}}QueryOptions) (*schema.{{$name}}QueryResult, error) {
 	var opt schema.{{$name}}QueryOptions
@@ -32,20 +60,7 @@ func (a *{{$name}}) Query(ctx context.Context, params schema.{{$name}}QueryParam
 	}
 
 	db := Get{{$name}}DB(ctx, a.DB)
-
-	{{- if $treeTpl}}
-	if v:= params.InIDs; len(v) > 0 {
-		db = db.Where("id IN ?", v)
-	}
-	{{- end}}
-
-    {{- range .Fields}}{{$type := .Type}}{{$fieldName := .Name}}
-    {{- with .Query}}
-	if v := params.{{.Name}}; {{with .IfCond}}{{.}}{{else}}{{convIfCond $type}}{{end}} {
-		db = db.Where("{{lowerUnderline $fieldName}} {{.OP}} ?", {{if .Args}}{{raw .Args}}{{else}}{{if eq .OP "LIKE"}}"%"+v+"%"{{else}}v{{end}}{{end}})
-	}
-    {{- end}}
-    {{- end}}
+	db = a.where(ctx, db, &params)
 
 	var list schema.{{plural .Name}}
 	pageResult, err := util.WrapPageQuery(ctx, db, params.PaginationParam, opt.QueryOptions, &list)
@@ -62,10 +77,7 @@ func (a *{{$name}}) Query(ctx context.Context, params schema.{{$name}}QueryParam
 
 // Get the specified {{lowerSpace .Name}} from the database.
 func (a *{{$name}}) Get(ctx context.Context, id string, opts ...schema.{{$name}}QueryOptions) (*schema.{{$name}}, error) {
-	var opt schema.{{$name}}QueryOptions
-	if len(opts) > 0 {
-		opt = opts[0]
-	}
+	opt := a.getQueryOption(opts...)
 
 	item := new(schema.{{$name}})
 	ok, err := util.FindOne(ctx, Get{{$name}}DB(ctx, a.DB).Where("id=?", id), opt.QueryOptions, item)
@@ -74,6 +86,21 @@ func (a *{{$name}}) Get(ctx context.Context, id string, opts ...schema.{{$name}}
 	} else if !ok {
 		return nil, nil
 	}
+	return item, nil
+}
+
+func (a *{{$name}}) GetSearch(ctx context.Context, params *schema.{{$name}}QueryParam, opts ...schema.{{$name}}QueryOptions) (*schema.{{$name}}, error) {
+	opt := a.getQueryOption(opts...)
+
+	item := new(schema.{{$name}})
+	db := a.where(ctx, Get{{$name}}DB(ctx, a.DB), params)
+	ok, err := util.FindOne(ctx, db, opt.QueryOptions, item)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	} else if !ok {
+		return nil, nil
+	}
+
 	return item, nil
 }
 
@@ -113,9 +140,19 @@ func (a *{{$name}}) Update(ctx context.Context, item *schema.{{$name}}) error {
 	return errors.WithStack(result.Error)
 }
 
+func (a *{{$name}}) Updates(ctx context.Context, params *schema.{{$name}}QueryParam, item *schema.{{$name}}) error {
+	result := a.where(ctx, GetGameInfoDB(ctx, a.DB), params).Updates(item)
+	return errors.WithStack(result.Error)
+}
+
 // Delete the specified {{lowerSpace .Name}} from the database.
 func (a *{{$name}}) Delete(ctx context.Context, id string) error {
 	result := Get{{$name}}DB(ctx, a.DB).Where("id=?", id).Delete(new(schema.{{$name}}))
+	return errors.WithStack(result.Error)
+}
+
+func (a *{{$name}}) Deletes(ctx context.Context, params *schema.{{$name}}QueryParam) error {
+	result := a.where(ctx, Get{{$name}}DB(ctx, a.DB), params).Delete(new(schema.{{$name}}))
 	return errors.WithStack(result.Error)
 }
 
