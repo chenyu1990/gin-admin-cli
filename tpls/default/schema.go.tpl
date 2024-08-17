@@ -28,10 +28,10 @@ func (a {{$name}}) TableName() string {
 type {{$name}}QueryParam struct {
 	util.PaginationParam
 	{{if $treeTpl}}InIDs []string `form:"-"`{{- end}}
-	{{- range .Fields}}{{$fieldName := .Name}}{{$type :=.Type}}
+	{{- range .Fields}}{{$fieldName := .Name}}
 	{{- range .Query}}
 	{{- with .}}
-	{{.Name}} {{$type}} `form:"{{with .FormTag}}{{.}}{{else}}-{{end}}"{{with .BindingTag}} binding:"{{.}}"{{end}}{{with .CustomTag}} {{raw .}}{{end}}`{{with .Comment}}// {{.}}{{end}}
+	{{.Name}} {{.Type}} `form:"{{with .FormTag}}{{.}}{{else}}-{{end}}"{{with .BindingTag}} binding:"{{.}}"{{end}}{{with .CustomTag}} {{raw .}}{{end}}`{{with .Comment}}// {{.}}{{end}}
 	{{- end}}
 	{{- end}}
 	{{- end}}

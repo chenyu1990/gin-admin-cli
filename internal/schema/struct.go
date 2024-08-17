@@ -164,10 +164,13 @@ func (a *Field) Format() *Field {
 				query.Comment = a.Comment
 			}
 			if query.InQuery && query.FormTag == "" {
-				query.FormTag = utils.ToLowerCamel(a.Name)
+				query.FormTag = utils.ToLowerUnderlinedNamer(a.Name)
 			}
 			if query.OP == "" {
 				query.OP = "="
+			}
+			if query.Type == "" {
+				query.Type = a.Type
 			}
 		}
 	}
@@ -200,6 +203,7 @@ type FieldQuery struct {
 	BindingTag string `yaml:"binding_tag,omitempty" json:"binding_tag,omitempty"`
 	CustomTag  string `yaml:"custom_tag,omitempty" json:"custom_tag,omitempty"`
 	Comment    string `yaml:"comment,omitempty" json:"comment,omitempty"`
+	Type       string `yaml:"type,omitempty" json:"type,omitempty"`
 	IfCond     string `yaml:"cond,omitempty" json:"cond,omitempty"`
 	OP         string `yaml:"op,omitempty" json:"op,omitempty"`     // LIKE/=/</>/<=/>=/<>
 	Args       string `yaml:"args,omitempty" json:"args,omitempty"` // v + "%"
