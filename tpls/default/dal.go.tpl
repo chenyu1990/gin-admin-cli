@@ -141,7 +141,7 @@ func (a *{{$name}}) Update(ctx context.Context, item *schema.{{$name}}) error {
 }
 
 func (a *{{$name}}) Updates(ctx context.Context, params *schema.{{$name}}QueryParam, item *schema.{{$name}}) error {
-	result := a.where(ctx, GetGameInfoDB(ctx, a.DB), params).Updates(item)
+	result := a.where(ctx, Get{{$name}}DB(ctx, a.DB), params).Updates(item)
 	return errors.WithStack(result.Error)
 }
 
