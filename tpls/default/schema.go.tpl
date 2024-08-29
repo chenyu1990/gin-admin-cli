@@ -4,7 +4,6 @@ import (
 	"time"
 
 	{{if .TableName}}"{{.RootImportPath}}/internal/config"{{end}}
-	"{{.UtilImportPath}}"
 )
 
 {{$name := .Name}}
@@ -26,7 +25,7 @@ func (a {{$name}}) TableName() string {
 
 // Defining the query parameters for the `{{$name}}` struct.
 type {{$name}}QueryParam struct {
-	util.PaginationParam
+	PaginationParam
 	{{if $treeTpl}}InIDs []string `form:"-"`{{- end}}
 	{{- range .Fields}}{{$fieldName := .Name}}
 	{{- range .Query}}
@@ -39,13 +38,13 @@ type {{$name}}QueryParam struct {
 
 // Defining the query options for the `{{$name}}` struct.
 type {{$name}}QueryOptions struct {
-	util.QueryOptions
+	QueryOptions
 }
 
 // Defining the query result for the `{{$name}}` struct.
 type {{$name}}QueryResult struct {
 	Data       {{plural .Name}}
-	PageResult *util.PaginationResult
+	PageResult *PaginationResult
 }
 
 // Defining the slice of `{{$name}}` struct.
@@ -86,7 +85,7 @@ func (a {{plural .Name}}) SplitParentIDs() []string {
 		}
 		idMapper[item.ID] = struct{}{}
 		if pp := item.ParentPath; pp != "" {
-			for _, pid := range strings.Split(pp, util.TreePathDelimiter) {
+			for _, pid := range strings.Split(pp, TreePathDelimiter) {
 				if pid == "" {
 					continue
 				}

@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"{{.UtilImportPath}}"
-	"{{.ModuleImportPath}}/schema"
+	"{{.RootImportPath}}/pkg/dbx"
 	"{{.RootImportPath}}/pkg/errors"
 	"gorm.io/gorm"
 )
@@ -16,7 +16,7 @@ import (
 
 // Get {{lowerSpace .Name}} storage instance
 func Get{{$name}}DB(ctx context.Context, defDB *gorm.DB) *gorm.DB {
-	return util.GetDB(ctx, defDB).Model(new(schema.{{$name}}))
+	return dbx.GetDB(ctx, defDB).Model(new(schema.{{$name}}))
 }
 
 {{with .Comment}}// {{.}}{{else}}// Defining the `{{$name}}` data access object.{{end}}
@@ -63,7 +63,7 @@ func (a *{{$name}}) Query(ctx context.Context, params schema.{{$name}}QueryParam
 	db = a.where(ctx, db, &params)
 
 	var list schema.{{plural .Name}}
-	pageResult, err := util.WrapPageQuery(ctx, db, params.PaginationParam, opt.QueryOptions, &list)
+	pageResult, err := dbx.WrapPageQuery(ctx, db, params.PaginationParam, opt.QueryOptions, &list)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -80,7 +80,7 @@ func (a *{{$name}}) Get(ctx context.Context, id string, opts ...schema.{{$name}}
 	opt := a.getQueryOption(opts...)
 
 	item := new(schema.{{$name}})
-	ok, err := util.FindOne(ctx, Get{{$name}}DB(ctx, a.DB).Where("id=?", id), opt.QueryOptions, item)
+	ok, err := dbx.FindOne(ctx, Get{{$name}}DB(ctx, a.DB).Where("id=?", id), opt.QueryOptions, item)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	} else if !ok {
@@ -94,7 +94,7 @@ func (a *{{$name}}) GetSearch(ctx context.Context, params *schema.{{$name}}Query
 
 	item := new(schema.{{$name}})
 	db := a.where(ctx, Get{{$name}}DB(ctx, a.DB), params)
-	ok, err := util.FindOne(ctx, db, opt.QueryOptions, item)
+	ok, err := dbx.FindOne(ctx, db, opt.QueryOptions, item)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	} else if !ok {
@@ -106,7 +106,7 @@ func (a *{{$name}}) GetSearch(ctx context.Context, params *schema.{{$name}}Query
 
 // Exists checks if the specified {{lowerSpace .Name}} exists in the database.
 func (a *{{$name}}) Exists(ctx context.Context, id string) (bool, error) {
-	ok, err := util.Exists(ctx, Get{{$name}}DB(ctx, a.DB).Where("id=?", id))
+	ok, err := dbx.Exists(ctx, Get{{$name}}DB(ctx, a.DB).Where("id=?", id))
 	return ok, errors.WithStack(err)
 }
 
@@ -115,13 +115,13 @@ func (a *{{$name}}) Exists(ctx context.Context, id string) (bool, error) {
 {{- if $treeTpl}}
 // Exist checks if the specified {{lowerSpace .Name}} exists in the database.
 func (a *{{$name}}) Exists{{.Name}}(ctx context.Context, parentID string, {{lowerCamel .Name}} string) (bool, error) {
-	ok, err := util.Exists(ctx, Get{{$name}}DB(ctx, a.DB).Where("parent_id=? AND {{lowerUnderline .Name}}=?", parentID, {{lowerCamel .Name}}))
+	ok, err := dbx.Exists(ctx, Get{{$name}}DB(ctx, a.DB).Where("parent_id=? AND {{lowerUnderline .Name}}=?", parentID, {{lowerCamel .Name}}))
 	return ok, errors.WithStack(err)
 }
 {{- else}}
 // Exist checks if the specified {{lowerSpace .Name}} exists in the database.
 func (a *{{$name}}) Exists{{.Name}}(ctx context.Context, {{lowerCamel .Name}} string) (bool, error) {
-	ok, err := util.Exists(ctx, Get{{$name}}DB(ctx, a.DB).Where("{{lowerUnderline .Name}}=?", {{lowerCamel .Name}}))
+	ok, err := dbx.Exists(ctx, Get{{$name}}DB(ctx, a.DB).Where("{{lowerUnderline .Name}}=?", {{lowerCamel .Name}}))
 	return ok, errors.WithStack(err)
 }
 {{- end}}
