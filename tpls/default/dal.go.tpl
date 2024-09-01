@@ -73,6 +73,9 @@ func (a *{{$name}}) Query(ctx context.Context, params schema.{{$name}}QueryParam
 	db := Get{{$name}}DB(ctx, a.DB)
 	var err error
     db, err = a.where(ctx, db, &params, opts...)
+	if err != nil {
+		return nil, err
+	}
 
 	var list schema.{{plural .Name}}
 	pageResult, err := dbx.WrapPageQuery(ctx, db, params.PaginationParam, opt.QueryOptions, &list)
