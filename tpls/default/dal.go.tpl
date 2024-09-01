@@ -32,7 +32,7 @@ func (a *{{$name}}) getQueryOption(opts ...schema.{{$name}}QueryOptions) schema.
 	return opt
 }
 
-func (a *{{$name}}) where(ctx context.Context, db *gorm.DB, params *schema.{{$name}}QueryParam) *gorm.DB {
+func (a *{{$name}}) where(ctx context.Context, db *gorm.DB, params *schema.{{$name}}QueryParam, opts ...schema.{{$name}}QueryOptions) (*gorm.DB, error) {
 	{{- if $treeTpl}}
 	if v:= params.InIDs; len(v) > 0 {
 		db = db.Where("id IN ?", v)
@@ -49,7 +49,18 @@ func (a *{{$name}}) where(ctx context.Context, db *gorm.DB, params *schema.{{$na
     {{- end}}
     {{- end}}
 
-	return db
+	if params.Pagination == false {
+		for _, opt := range opts {
+			if opt.MustWhere {
+				_, ok := db.Statement.Clauses["WHERE"]
+				if !ok {
+					return nil, errors.BadRequest("", "必须有查询条件")
+				}
+				break
+			}
+		}
+	}
+	return db, nil
 }
 
 // Query {{lowerSpacePlural .Name}} from the database based on the provided parameters and options.
@@ -60,7 +71,8 @@ func (a *{{$name}}) Query(ctx context.Context, params schema.{{$name}}QueryParam
 	}
 
 	db := Get{{$name}}DB(ctx, a.DB)
-	db = a.where(ctx, db, &params)
+	var err error
+    db, err = a.where(ctx, db, &params)
 
 	var list schema.{{plural .Name}}
 	pageResult, err := dbx.WrapPageQuery(ctx, db, params.PaginationParam, opt.QueryOptions, &list)
@@ -93,7 +105,10 @@ func (a *{{$name}}) GetSearch(ctx context.Context, params *schema.{{$name}}Query
 	opt := a.getQueryOption(opts...)
 
 	item := new(schema.{{$name}})
-	db := a.where(ctx, Get{{$name}}DB(ctx, a.DB), params)
+	db, err := a.where(ctx, Get{{$name}}DB(ctx, a.DB), params)
+	if err != nil {
+        return nil, errors.WithStack(err)
+    }
 	ok, err := dbx.FindOne(ctx, db, opt.QueryOptions, item)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -141,7 +156,11 @@ func (a *{{$name}}) Update(ctx context.Context, item *schema.{{$name}}) error {
 }
 
 func (a *{{$name}}) Updates(ctx context.Context, params *schema.{{$name}}QueryParam, item *schema.{{$name}}) error {
-	result := a.where(ctx, Get{{$name}}DB(ctx, a.DB), params).Updates(item)
+    db, err := a.where(ctx, Get{{$name}}DB(ctx, a.DB), params)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	result := db.Updates(item)
 	return errors.WithStack(result.Error)
 }
 
@@ -152,7 +171,11 @@ func (a *{{$name}}) Delete(ctx context.Context, id string) error {
 }
 
 func (a *{{$name}}) Deletes(ctx context.Context, params *schema.{{$name}}QueryParam) error {
-	result := a.where(ctx, Get{{$name}}DB(ctx, a.DB), params).Delete(new(schema.{{$name}}))
+    db, err := a.where(ctx, Get{{$name}}DB(ctx, a.DB), params)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	result := db.Delete(new(schema.{{$name}}))
 	return errors.WithStack(result.Error)
 }
 
