@@ -29,7 +29,7 @@ func (a *{{$name}}) Query(ctx context.Context, params schema.{{$name}}QueryParam
 
 	result, err := a.{{$name}}DAL.Query(ctx, params, schema.{{$name}}QueryOptions{
 		QueryOptions: schema.QueryOptions{
-			OrderFields: []schema.OrderByParam{
+			OrderFields: []schema.OrderField{
                 {{- range .Fields}}{{$fieldName := .Name}}
 				{{- if .Order}}
 				{Field: "{{lowerUnderline $fieldName}}", Direction: {{if eq .Order "DESC"}}schema.DESC{{else}}util.ASC{{end}}},
