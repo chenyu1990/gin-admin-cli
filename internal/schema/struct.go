@@ -175,9 +175,15 @@ func (a *Field) Format() *Field {
 					if query.Name == "" {
 						query.Name = a.Name + "Bgn"
 					}
+					if query.FormTag == "" {
+						query.FormTag = utils.ToLowerUnderlinedNamer(a.Name + "Bgn")
+					}
 				} else if query.OP == "<" {
 					if query.Name == "" {
 						query.Name = a.Name + "End"
+					}
+					if query.FormTag == "" {
+						query.FormTag = utils.ToLowerUnderlinedNamer(a.Name + "End")
 					}
 				} else if op == "in" {
 					query.IfCond = "len(v) > 0"
