@@ -32,11 +32,11 @@ var FuncMap = template.FuncMap{
 }
 
 func tplConvToIfCond(t string) template.HTML {
-	cond := `v != nil`
+	cond := `v != ""`
 	if strings.HasPrefix(t, "*") {
 		cond = `v != nil`
 	} else if t == "string" {
-		cond = `len(v) > 0`
+		cond = `v != ""`
 	} else if strings.Contains(t, "int") {
 		cond = `v != 0`
 	} else if strings.Contains(t, "float") {

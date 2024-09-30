@@ -157,20 +157,52 @@ func (a *Field) Format() *Field {
 
 	for _, query := range a.Query {
 		if query != nil {
+			if query.Type == "" {
+				query.Type = a.Type
+			}
+			if query.OP == "" {
+				query.OP = "="
+			} else {
+				op := strings.ToLower(query.OP)
+				if op == "like" {
+					if query.Name == "" {
+						query.Name = a.Name + "Like"
+					}
+					if query.FormTag == "" {
+						query.FormTag = utils.ToLowerUnderlinedNamer(a.Name + "Like")
+					}
+				} else if query.OP == ">=" {
+					if query.Name == "" {
+						query.Name = a.Name + "Bgn"
+					}
+				} else if query.OP == "<" {
+					if query.Name == "" {
+						query.Name = a.Name + "End"
+					}
+				} else if op == "in" {
+					query.IfCond = "len(v) > 0"
+					query.Type = "[]" + query.Type
+					if query.FormTag == "" {
+						query.FormTag = utils.ToLowerPlural(a.Name)
+					}
+					if query.Name == "" {
+						query.Name = utils.ToPlural(a.Name)
+					}
+				}
+			}
+			if query.IfCond == "" {
+				if query.Type == "decimal.Decimal" || query.Type == "*time.Time" || query.Type == "time.Time" || query.Type == "time" {
+					query.IfCond = "v.IsZero() == false"
+				}
+			}
 			if query.Name == "" {
 				query.Name = a.Name
 			}
 			if query.Comment == "" {
 				query.Comment = a.Comment
 			}
-			if query.InQuery && query.FormTag == "" {
+			if query.FormTag == "" {
 				query.FormTag = utils.ToLowerUnderlinedNamer(a.Name)
-			}
-			if query.OP == "" {
-				query.OP = "="
-			}
-			if query.Type == "" {
-				query.Type = a.Type
 			}
 		}
 	}
