@@ -8,6 +8,7 @@ import (
 	"{{.ModuleImportPath}}/schema"
 	"{{.RootImportPath}}/pkg/dbx"
 	"{{.RootImportPath}}/pkg/errors"
+	pkgSchema "{{.RootImportPath}}/pkg/schema"
 )
 
 {{$name := .Name}}
@@ -28,11 +29,11 @@ func (a *{{$name}}) Query(ctx context.Context, params schema.{{$name}}QueryParam
 	params.Pagination = {{if .DisablePagination}}false{{else}}true{{end}}
 
 	result, err := a.{{$name}}DAL.Query(ctx, params, schema.{{$name}}QueryOptions{
-		QueryOptions: schema.QueryOptions{
-			OrderFields: []schema.OrderField{
+		QueryOptions: pkgSchema.QueryOptions{
+			OrderFields: []pkgSchema.OrderField{
                 {{- range .Fields}}{{$fieldName := .Name}}
 				{{- if .Order}}
-				{Field: "{{lowerUnderline $fieldName}}", Direction: {{if eq .Order "DESC"}}schema.DESC{{else}}util.ASC{{end}}},
+				{Field: "{{lowerUnderline $fieldName}}", Direction: {{if eq .Order "DESC"}}pkgSchema.DESC{{else}}pkgSchema.ASC{{end}}},
 				{{- end}}
                 {{- end}}
 			},
