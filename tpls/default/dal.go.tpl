@@ -148,8 +148,13 @@ func (a *{{$name}}) Exists{{.Name}}(ctx context.Context, {{lowerCamel .Name}} st
 {{- end}}
 
 // Create a new {{lowerSpace .Name}}.
-func (a *{{$name}}) Create(ctx context.Context, item *schema.{{$name}}) error {
-	result := Get{{$name}}DB(ctx, a.DB).Create(item)
+func (a *{{$name}}) Create(ctx context.Context, item *schema.{{$name}}, opts ...schema.{{$name}}QueryOptions) error {
+    db := Get{{$name}}DB(ctx, a.DB)
+	opt := a.getQueryOption(opts...)
+	if len(opt.OmitFields) > 0 {
+		db = db.Omit(opt.OmitFields...)
+	}
+	result := db.Create(item)
 	return errors.WithStack(result.Error)
 }
 
