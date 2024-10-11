@@ -189,7 +189,7 @@ func (a *Field) Format() *Field {
 					query.IfCond = "len(v) > 0"
 					query.Type = "[]" + query.Type
 					if query.FormTag == "" {
-						query.FormTag = utils.ToLowerPlural(a.Name)
+						query.FormTag = utils.ToLowerUnderlinedNamer(utils.ToPlural(a.Name))
 					}
 					if query.Name == "" {
 						query.Name = utils.ToPlural(a.Name)
