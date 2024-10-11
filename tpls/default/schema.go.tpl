@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"telegram-bots/pkg/schema"
 	"time"
 
 	{{if .TableName}}"{{.RootImportPath}}/internal/config"{{end}}
@@ -25,7 +26,7 @@ func (a {{$name}}) TableName() string {
 
 // Defining the query parameters for the `{{$name}}` struct.
 type {{$name}}QueryParam struct {
-	PaginationParam
+	schema.PaginationParam
 	{{if $treeTpl}}InIDs []string `form:"-"`{{- end}}
 	{{- range .Fields}}{{$fieldName := .Name}}
 	{{- range .Query}}
@@ -38,13 +39,13 @@ type {{$name}}QueryParam struct {
 
 // Defining the query options for the `{{$name}}` struct.
 type {{$name}}QueryOptions struct {
-	QueryOptions
+	schema.QueryOptions
 }
 
 // Defining the query result for the `{{$name}}` struct.
 type {{$name}}QueryResult struct {
 	Data       {{plural .Name}}
-	PageResult *PaginationResult
+	PageResult *schema.PaginationResult
 }
 
 // Defining the slice of `{{$name}}` struct.

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"{{.UtilImportPath}}"
+	"{{.ModuleImportPath}}/schema"
 	"{{.RootImportPath}}/pkg/dbx"
 	"{{.RootImportPath}}/pkg/errors"
 	"gorm.io/gorm"
@@ -153,9 +154,16 @@ func (a *{{$name}}) Create(ctx context.Context, item *schema.{{$name}}) error {
 }
 
 // Update the specified {{lowerSpace .Name}} in the database.
-func (a *{{$name}}) Update(ctx context.Context, item *schema.{{$name}}) error {
-	result := Get{{$name}}DB(ctx, a.DB).Where("id=?", item.ID).Select("*"){{if $includeCreatedAt}}.Omit("created_at"){{end}}.Updates(item)
-	return errors.WithStack(result.Error)
+func (a *{{$name}}) Update(ctx context.Context, item *schema.{{$name}}, opts ...schema.{{$name}}QueryOptions) error {
+    db := Get{{$name}}DB(ctx, a.DB).Where("id=?", item.ID)
+	opt := a.getQueryOption(opts...)
+	if len(opt.SelectFields) > 0 {
+		db = db.Select(opt.SelectFields)
+	} else {
+		db = db.Select("*").Omit("created_at")
+	}
+	result := db.Updates(item)
+    return errors.WithStack(result.Error)
 }
 
 func (a *{{$name}}) Updates(ctx context.Context, params *schema.{{$name}}QueryParam, item *schema.{{$name}}) error {
