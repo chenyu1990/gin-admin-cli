@@ -14,7 +14,9 @@ import (
 {{with .Comment}}// {{.}}{{else}}// Defining the `{{$name}}` struct.{{end}}
 type {{$name}} struct {
     {{- range .Fields}}{{$fieldName := .Name}}
+    {{- if .Name}}
 	{{$fieldName}} {{.Type}} `json:"{{.JSONTag}},omitempty"{{with .GormTag}} gorm:"{{.}}"{{end}}{{with .CustomTag}} {{raw .}}{{end}}`{{with .Comment}}// {{.}}{{end}}
+	{{- end}}
 	{{- end}}
 }
 
