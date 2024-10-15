@@ -15,7 +15,7 @@ import (
 type {{$name}} struct {
     {{- range .Fields}}{{$fieldName := .Name}}
     {{- if .Name}}
-	{{$fieldName}} {{.Type}} `json:"{{.JSONTag}},omitempty"{{with .GormTag}} gorm:"{{.}}"{{end}}{{with .CustomTag}} {{raw .}}{{end}}`{{with .Comment}}// {{.}}{{end}}
+	{{$fieldName}} {{.Type}} `json:"{{if ne .JSONTag "-"}}{{.JSONTag}},omitempty{{else}}-{{end}}"{{with .GormTag}} gorm:"{{.}}"{{end}}{{with .CustomTag}} {{raw .}}{{end}}`{{with .Comment}}// {{.}}{{end}}
 	{{- end}}
 	{{- end}}
 }
