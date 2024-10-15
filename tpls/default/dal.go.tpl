@@ -39,7 +39,12 @@ func (a *{{$name}}) where(ctx context.Context, db *gorm.DB, params *schema.{{$na
 		db = db.Where("id IN ?", v)
 	}
 	{{- end}}
-
+	if v := params.ID; v != "" {
+		db = db.Where("`id` = ?", v)
+	}
+	if v := params.IDs; len(v) > 0 {
+		db = db.Where("`id` IN (?)", v)
+	}
     {{- range .Fields}}{{$type := .Type}}{{$fieldName := .Name}}
     {{- range .Query}}
     {{- with .}}

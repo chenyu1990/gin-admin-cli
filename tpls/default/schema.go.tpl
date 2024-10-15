@@ -30,6 +30,8 @@ func (a {{$name}}) TableName() string {
 type {{$name}}QueryParam struct {
 	schema.PaginationParam
 	{{if $treeTpl}}InIDs []string `form:"-"`{{- end}}
+	ID  string   `form:"id"`  // 唯一标识
+	IDs []string `form:"ids"` // 唯一标识
 	{{- range .Fields}}{{$fieldName := .Name}}
 	{{- range .Query}}
 	{{- with .}}
