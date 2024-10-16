@@ -41,6 +41,11 @@ type {{$name}}QueryParam struct {
 	{{- end}}
 }
 
+func (a *{{$name}}QueryParam) String() string {
+	bytes, _ := json.Marshal(a)
+	return string(bytes)
+}
+
 // Defining the query options for the `{{$name}}` struct.
 type {{$name}}QueryOptions struct {
 	schema.QueryOptions

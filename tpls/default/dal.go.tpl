@@ -20,11 +20,15 @@ func Get{{$name}}DB(ctx context.Context, defDB *gorm.DB) *gorm.DB {
 	return dbx.GetDB(ctx, defDB).Model(new(schema.{{$name}}))
 }
 
+type cache{{$name}} struct {
+	Map  schema.{{$name}}Map
+	Time time.Time
+}
+
 {{with .Comment}}// {{.}}{{else}}// Defining the `{{$name}}` data access object.{{end}}
 type {{$name}} struct {
 	DB *gorm.DB
-	cacheTime time.Time         `wire:"-"`
-	cacheMap  schema.{{$name}}Map `wire:"-"`
+	cacheMap map[string]*cache{{$name}} `wire:"-"`
 }
 
 func (a *{{$name}}) getQueryOption(opts ...schema.{{$name}}QueryOptions) schema.{{$name}}QueryOptions {
@@ -202,15 +206,16 @@ func (a *{{$name}}) Deletes(ctx context.Context, params *schema.{{$name}}QueryPa
 	return errors.WithStack(result.Error)
 }
 
-func (a *{{$name}}) GetMap(ctx context.Context) (schema.{{$name}}Map, error) {
+func (a *{{$name}}) GetMap(ctx context.Context, params *schema.{{$name}}QueryParam) (schema.{{$name}}Map, error) {
+	now := time.Now()
+	cacheKey := fmt.Sprintf("%s", params)
 	if a.cacheMap == nil {
-		a.cacheMap = make(schema.{{$name}}Map)
+		a.cacheMap = make(map[string]*cache{{$name}})
+	}
+	if a.cacheMap[cacheKey] != nil && a.cacheMap[cacheKey].Time.Add(5*time.Second).After(now) {
+		return a.cacheMap[cacheKey].Map, nil
 	}
 
-	now := time.Now()
-	if a.cacheTime.Add(5 * time.Second).After(now) {
-		return a.cacheMap, nil
-	}
 	{{lowerSpace .Name}}QueryResult, err := a.Query(ctx, schema.{{$name}}QueryParam{}, schema.{{$name}}QueryOptions{
 		QueryOptions: pkgSchema.QueryOptions{
 			OrderFields: []pkgSchema.OrderField{
@@ -227,9 +232,10 @@ func (a *{{$name}}) GetMap(ctx context.Context) (schema.{{$name}}Map, error) {
 		{{lowerSpace .Name}}Map[{{lowerSpace .Name}}.ID] = {{lowerSpace .Name}}
 	}
 
-
-	a.cacheMap = {{lowerSpace .Name}}Map
-	a.cacheTime = now
+    a.cacheMap[cacheKey] = &cache{{$name}}{
+        Map:  {{lowerSpace .Name}}Map,
+        Time: now,
+    }
 	return {{lowerSpace .Name}}Map, nil
 }
 
