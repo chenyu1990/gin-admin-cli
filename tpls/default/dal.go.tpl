@@ -23,6 +23,8 @@ func Get{{$name}}DB(ctx context.Context, defDB *gorm.DB) *gorm.DB {
 {{with .Comment}}// {{.}}{{else}}// Defining the `{{$name}}` data access object.{{end}}
 type {{$name}} struct {
 	DB *gorm.DB
+	cacheTime time.Time         `wire:"-"`
+	cacheMap  schema.{{$name}}Map `wire:"-"`
 }
 
 func (a *{{$name}}) getQueryOption(opts ...schema.{{$name}}QueryOptions) schema.{{$name}}QueryOptions {
@@ -198,6 +200,37 @@ func (a *{{$name}}) Deletes(ctx context.Context, params *schema.{{$name}}QueryPa
 	}
 	result := db.Delete(new(schema.{{$name}}))
 	return errors.WithStack(result.Error)
+}
+
+func (a *{{$name}}) GetMap(ctx context.Context) (schema.{{$name}}Map, error) {
+	if a.cacheMap == nil {
+		a.cacheMap = make(schema.{{$name}}Map)
+	}
+
+	now := time.Now()
+	if a.cacheTime.Add(5 * time.Second).After(now) {
+		return a.cacheMap, nil
+	}
+	{{lowerSpace .Name}}QueryResult, err := a.Query(ctx, schema.{{$name}}QueryParam{}, schema.{{$name}}QueryOptions{
+		QueryOptions: pkgSchema.QueryOptions{
+			OrderFields: []pkgSchema.OrderField{
+				//{Field: "sequence", Direction: pkgSchema.DESC},
+			},
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	{{lowerSpace .Name}}Map := make(schema.{{$name}}Map)
+	for _, {{lowerSpace .Name}} := range {{lowerSpace .Name}}QueryResult.Data {
+		{{lowerSpace .Name}}Map[{{lowerSpace .Name}}.ID] = {{lowerSpace .Name}}
+	}
+
+
+	a.cacheMap = {{lowerSpace .Name}}Map
+	a.cacheTime = now
+	return {{lowerSpace .Name}}Map, nil
 }
 
 {{- if $treeTpl}}

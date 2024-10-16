@@ -54,6 +54,7 @@ type {{$name}}QueryResult struct {
 
 // Defining the slice of `{{$name}}` struct.
 type {{plural .Name}} []*{{$name}}
+type {{$name}}Map map[string]*{{$name}}
 
 {{- if $includeSequence}}
 func (a {{plural .Name}}) Len() int {
