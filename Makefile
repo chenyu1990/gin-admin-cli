@@ -9,4 +9,4 @@ GIT_HASH        = $(shell git rev-parse --short HEAD)
 RELEASE_TAG     = $(RELEASE_VERSION).$(GIT_COUNT).$(GIT_HASH)
 
 build:
-	@go build -ldflags "-w -s -X main.VERSION=$(RELEASE_TAG)" -o $(BIN)
+	@go build -ldflags "-w -s -X main.VERSION=$(RELEASE_TAG)" -o C:\Users\86198\go\bin\$(BIN).exe
