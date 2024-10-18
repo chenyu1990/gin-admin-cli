@@ -2,6 +2,7 @@ package dal
 
 import (
 	"context"
+	"time"
 
 	"{{.UtilImportPath}}"
 	"{{.ModuleImportPath}}/schema"
@@ -216,7 +217,7 @@ func (a *{{$name}}) GetMap(ctx context.Context, params *schema.{{$name}}QueryPar
 		return a.cacheMap[cacheKey].Map, nil
 	}
 
-	{{lowerSpace .Name}}QueryResult, err := a.Query(ctx, schema.{{$name}}QueryParam{}, schema.{{$name}}QueryOptions{
+	{{lowerCamel .Name}}QueryResult, err := a.Query(ctx, schema.{{$name}}QueryParam{}, schema.{{$name}}QueryOptions{
 		QueryOptions: pkgSchema.QueryOptions{
 			OrderFields: []pkgSchema.OrderField{
 				//{Field: "sequence", Direction: pkgSchema.DESC},
@@ -227,16 +228,16 @@ func (a *{{$name}}) GetMap(ctx context.Context, params *schema.{{$name}}QueryPar
 		return nil, err
 	}
 
-	{{lowerSpace .Name}}Map := make(schema.{{$name}}Map)
-	for _, {{lowerSpace .Name}} := range {{lowerSpace .Name}}QueryResult.Data {
-		{{lowerSpace .Name}}Map[{{lowerSpace .Name}}.ID] = {{lowerSpace .Name}}
+	{{lowerCamel .Name}}Map := make(schema.{{$name}}Map)
+	for _, {{lowerCamel .Name}} := range {{lowerCamel .Name}}QueryResult.Data {
+		{{lowerCamel .Name}}Map[{{lowerCamel .Name}}.ID] = {{lowerCamel .Name}}
 	}
 
     a.cacheMap[cacheKey] = &cache{{$name}}{
-        Map:  {{lowerSpace .Name}}Map,
+        Map:  {{lowerCamel .Name}}Map,
         Time: now,
     }
-	return {{lowerSpace .Name}}Map, nil
+	return {{lowerCamel .Name}}Map, nil
 }
 
 {{- if $treeTpl}}
