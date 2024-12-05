@@ -131,6 +131,7 @@ type Rewrite struct {
 
 type Field struct {
 	Name      string                 `yaml:"name,omitempty" json:"name,omitempty"`
+	OnlyCond  bool                   `yaml:"only_cond,omitempty" json:"only_cond,omitempty"`
 	Type      string                 `yaml:"type,omitempty" json:"type,omitempty"`
 	GormTag   string                 `yaml:"gorm_tag,omitempty" json:"gorm_tag,omitempty"`
 	JSONTag   string                 `yaml:"json_tag,omitempty" json:"json_tag,omitempty"`

@@ -14,8 +14,10 @@ import (
 {{with .Comment}}// {{.}}{{else}}// Defining the `{{$name}}` struct.{{end}}
 type {{$name}} struct {
     {{- range .Fields}}{{$fieldName := .Name}}
+	{{- if eq .OnlyCond false}}
     {{- if .Name}}
 	{{$fieldName}} {{.Type}} `json:"{{if ne .JSONTag "-"}}{{.JSONTag}},omitempty{{else}}-{{end}}"{{with .GormTag}} gorm:"{{.}}"{{end}}{{with .CustomTag}} {{raw .}}{{end}}`{{with .Comment}}// {{.}}{{end}}
+	{{- end}}
 	{{- end}}
 	{{- end}}
 }
