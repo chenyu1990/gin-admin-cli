@@ -230,7 +230,7 @@ func (a *{{$name}}) GetMap(ctx context.Context, params *schema.{{$name}}QueryPar
 
 	{{lowerCamel .Name}}Map := make(schema.{{$name}}Map)
 	for _, {{lowerCamel .Name}} := range {{lowerCamel .Name}}QueryResult.Data {
-		{{lowerCamel .Name}}Map[{{lowerCamel .Name}}.ID] = {{lowerCamel .Name}}
+		{{lowerCamel .Name}}Map[{{lowerCamel .Name}}.{{.MapKeyFieldName}}] = {{lowerCamel .Name}}
 	}
 
     a.cacheMap[cacheKey] = &cache{{$name}}{

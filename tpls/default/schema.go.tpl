@@ -1,7 +1,7 @@
 package schema
 
 import (
-	"telegram-bots/pkg/schema"
+	"{{.RootImportPath}}/pkg/schema"
 	"time"
 
 	{{if .TableName}}"{{.RootImportPath}}/internal/config"{{end}}
@@ -61,7 +61,7 @@ type {{$name}}QueryResult struct {
 
 // Defining the slice of `{{$name}}` struct.
 type {{plural .Name}} []*{{$name}}
-type {{$name}}Map map[string]*{{$name}}
+type {{$name}}Map map[{{.MapKeyType}}]*{{$name}}
 
 {{- if $includeSequence}}
 func (a {{plural .Name}}) Len() int {

@@ -18,6 +18,8 @@ type S struct {
 		UpdatedAt bool
 		Sequence  bool
 	} `yaml:"-" json:"-"`
+	MapKeyType           string                 `yaml:"map_key_type,omitempty" json:"map_key_type,omitempty"`
+	MapKeyFieldName      string                 `yaml:"map_key_field_name,omitempty" json:"map_key_field_name,omitempty"`
 	Module               string                 `yaml:"module,omitempty" json:"module,omitempty"`
 	Name                 string                 `yaml:"name,omitempty" json:"name,omitempty"`
 	TableName            string                 `yaml:"table_name,omitempty" json:"table_name,omitempty"`
@@ -209,7 +211,11 @@ func (a *Field) Format() *Field {
 				query.Comment = a.Comment
 			}
 			if query.FormTag == "" {
-				query.FormTag = utils.ToLowerUnderlinedNamer(a.Name)
+				if query.Name == "" {
+					query.FormTag = utils.ToLowerUnderlinedNamer(a.Name)
+				} else {
+					query.FormTag = utils.ToLowerUnderlinedNamer(query.Name)
+				}
 			}
 		}
 	}
