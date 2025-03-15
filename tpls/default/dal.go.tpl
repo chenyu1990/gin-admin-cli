@@ -56,7 +56,11 @@ func (a *{{$name}}) where(ctx context.Context, db *gorm.DB, params *schema.{{$na
     {{- range .Query}}
     {{- with .}}
 	if v := params.{{.Name}}; {{with .IfCond}}{{.}}{{else}}{{convIfCond $type}}{{end}} {
+	    {{- if .Where}}
+		db = db.Where("{{.Where}}", {{.Value}})
+	    {{- else}}
 		db = db.Where("`{{lowerUnderline $fieldName}}` {{.OP}} {{if eq .OP "IN"}}(?){{else}}?{{end}}", {{if .Args}}{{raw .Args}}{{else}}{{if eq .OP "LIKE"}}"%"+v+"%"{{else}}v{{end}}{{end}})
+        {{- end}}
 	}
     {{- end}}
     {{- end}}

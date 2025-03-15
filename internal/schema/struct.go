@@ -248,6 +248,8 @@ type FieldQuery struct {
 	BindingTag string `yaml:"binding_tag,omitempty" json:"binding_tag,omitempty"`
 	CustomTag  string `yaml:"custom_tag,omitempty" json:"custom_tag,omitempty"`
 	Comment    string `yaml:"comment,omitempty" json:"comment,omitempty"`
+	Where      string `yaml:"where,omitempty" json:"where,omitempty"`
+	Value      string `yaml:"value,omitempty" json:"value,omitempty"`
 	Type       string `yaml:"type,omitempty" json:"type,omitempty"`
 	IfCond     string `yaml:"cond,omitempty" json:"cond,omitempty"`
 	OP         string `yaml:"op,omitempty" json:"op,omitempty"`     // LIKE/=/</>/<=/>=/<>
