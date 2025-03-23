@@ -217,7 +217,7 @@ func (a *{{$name}}) GetMap(ctx context.Context, params *schema.{{$name}}QueryPar
 	if a.cacheMap == nil {
 		a.cacheMap = make(map[string]*cache{{$name}})
 	}
-	if a.cacheMap[cacheKey] != nil && a.cacheMap[cacheKey].Time.Add(5*time.Second).After(now) {
+	if a.cacheMap[cacheKey] != nil && a.cacheMap[cacheKey].Time.Add({{.MapKeyCacheTime}}*time.Second).After(now) {
 		return a.cacheMap[cacheKey].Map, nil
 	}
 
@@ -234,7 +234,7 @@ func (a *{{$name}}) GetMap(ctx context.Context, params *schema.{{$name}}QueryPar
 
 	{{lowerCamel .Name}}Map := make(schema.{{$name}}Map)
 	for _, {{lowerCamel .Name}} := range {{lowerCamel .Name}}QueryResult.Data {
-		{{lowerCamel .Name}}Map[{{lowerCamel .Name}}.{{.MapKeyFieldName}}] = {{lowerCamel .Name}}
+		{{lowerCamel .Name}}Map[{{.MapKeyFieldName}}] = {{lowerCamel .Name}}
 	}
 
     a.cacheMap[cacheKey] = &cache{{$name}}{

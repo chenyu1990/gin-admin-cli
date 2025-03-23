@@ -20,6 +20,7 @@ type S struct {
 	} `yaml:"-" json:"-"`
 	MapKeyType           string                 `yaml:"map_key_type,omitempty" json:"map_key_type,omitempty"`
 	MapKeyFieldName      string                 `yaml:"map_key_field_name,omitempty" json:"map_key_field_name,omitempty"`
+	MapKeyCacheTime      int64                  `yaml:"map_key_cache_time,omitempty" json:"map_key_cache_time,omitempty"`
 	Module               string                 `yaml:"module,omitempty" json:"module,omitempty"`
 	Name                 string                 `yaml:"name,omitempty" json:"name,omitempty"`
 	TableName            string                 `yaml:"table_name,omitempty" json:"table_name,omitempty"`
@@ -41,6 +42,10 @@ type S struct {
 func (a *S) Format() *S {
 	if a.TplType != "" {
 		a.TplType = strings.ToLower(a.TplType)
+	}
+
+	if a.MapKeyCacheTime <= 0 {
+		a.MapKeyCacheTime = 5
 	}
 
 	if !a.DisableDefaultFields {
