@@ -202,6 +202,15 @@ func (a *Field) Format() *Field {
 					if query.Name == "" {
 						query.Name = utils.ToPlural(a.Name)
 					}
+				} else if op == "not in" {
+					query.IfCond = "len(v) > 0"
+					query.Type = "[]" + query.Type
+					if query.FormTag == "" {
+						query.FormTag = "not_" + utils.ToLowerUnderlinedNamer(utils.ToPlural(a.Name))
+					}
+					if query.Name == "" {
+						query.Name = "Not" + utils.ToPlural(a.Name)
+					}
 				}
 			}
 			if query.IfCond == "" {
