@@ -19,10 +19,6 @@ import (
 {{$treeTpl := eq .TplType "tree"}}
 
 {{with .Comment}}// {{.}}{{else}}// Defining the `{{$name}}` business logic.{{end}}
-type {{$name}} struct {
-	Trans       *dbx.Trans
-	{{$name}}DAL *dal.{{$name}}
-}
 
 // Query {{lowerSpacePlural .Name}} from the data access object based on the provided parameters and options.
 func (a *{{$name}}) Query(ctx context.Context, params schema.{{$name}}QueryParam) (*schema.{{$name}}QueryResult, error) {

@@ -13,6 +13,7 @@ const (
 	FileForModuleWire       = "{{lower .ModuleName}}/wire.go"
 	FileForModuleAPI        = "{{lower .ModuleName}}/api/{{lowerUnderline .StructName}}.api.go"
 	FileForModuleBiz        = "{{lower .ModuleName}}/biz/{{lowerUnderline .StructName}}.biz.go"
+	FileForModuleBizStruct  = "{{lower .ModuleName}}/biz/{{lowerUnderline .StructName}}.struct.biz.go"
 	FileForModuleDAL        = "{{lower .ModuleName}}/dal/{{lowerUnderline .StructName}}.dal.go"
 	FileForModuleSchema     = "{{lower .ModuleName}}/schema/{{lowerUnderline .StructName}}.go"
 	FileForModuleJsonSchema = "{{lower .ModuleName}}/schema/{{lowerUnderline .StructName}}.json.go"

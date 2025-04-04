@@ -271,6 +271,17 @@ func (a *GenerateAction) generate(ctx context.Context, dataItem *schema.S) error
 			if dataItem.Rewrite != nil && dataItem.Rewrite.Biz {
 				rewrite = true
 			}
+
+			tplJsonName := a.getGoTplFile("biz.struct", dataItem.TplType)
+			tplJsonData, err := a.fs.ParseTpl(tplJsonName, dataItem)
+			if err != nil {
+				a.logger.Errorf("Failed to parse tpl, err: %s, #struct %s, #tpl %s", err, dataItem.Name, tplName)
+				return err
+			}
+			err = a.write(ctx, dataItem.Module, dataItem.Name, parser.FileForModuleBizStruct, tplJsonData, true)
+			if err != nil {
+				return err
+			}
 		case "api":
 			if dataItem.Rewrite != nil && dataItem.Rewrite.Api {
 				rewrite = true
