@@ -221,7 +221,7 @@ func (a *{{$name}}) GetMap(ctx context.Context, params *schema.{{$name}}QueryPar
 		return a.cacheMap[cacheKey].Map, nil
 	}
 
-	{{lowerCamel .Name}}QueryResult, err := a.Query(ctx, schema.{{$name}}QueryParam{}, schema.{{$name}}QueryOptions{
+	{{lowerCamel .Name}}QueryResult, err := a.Query(ctx, *params, schema.{{$name}}QueryOptions{
 		QueryOptions: pkgSchema.QueryOptions{
 			OrderFields: []pkgSchema.OrderField{
 				//{Field: "sequence", Direction: pkgSchema.DESC},
