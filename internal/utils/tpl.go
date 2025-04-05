@@ -20,6 +20,7 @@ var FuncMap = template.FuncMap{
 	"titleSpace":         ToTitleSpaceNamer,
 	"convIfCond":         tplConvToIfCond,
 	"convSwaggerType":    tplConvToSwaggerType,
+	"contains":           func(s string, sub string) bool { return strings.Contains(s, sub) },
 	"raw":                func(s string) template.HTML { return template.HTML(s) },
 	"convGoTypeToTsType": func(goType string) string {
 		if strings.Contains(goType, "int") || strings.Contains(goType, "float") {

@@ -18,9 +18,11 @@ import (
 {{$includeStatus := .Include.Status}}
 {{$treeTpl := eq .TplType "tree"}}
 
-{{with .Comment}}// {{.}}{{else}}// Defining the `{{$name}}` business logic.{{end}}
+type {{$name}} struct {
+	Trans       *dbx.Trans
+	{{$name}}DAL *dal.{{$name}}
+}
 
-// Query {{lowerSpacePlural .Name}} from the data access object based on the provided parameters and options.
 func (a *{{$name}}) Query(ctx context.Context, params schema.{{$name}}QueryParam) (*schema.{{$name}}QueryResult, error) {
 	params.Pagination = {{if .DisablePagination}}false{{else}}true{{end}}
 
@@ -96,7 +98,6 @@ func (a *{{$name}}) appendChildren(ctx context.Context, data schema.{{plural .Na
 }
 {{- end}}
 
-// Get the specified {{lowerSpace .Name}} from the data access object.
 func (a *{{$name}}) Get(ctx context.Context, id string) (*schema.{{$name}}, error) {
 	{{lowerCamel $name}}, err := a.{{$name}}DAL.Get(ctx, id)
 	if err != nil {
@@ -107,7 +108,6 @@ func (a *{{$name}}) Get(ctx context.Context, id string) (*schema.{{$name}}, erro
 	return {{lowerCamel $name}}, nil
 }
 
-// Create a new {{lowerSpace .Name}} in the data access object.
 func (a *{{$name}}) Create(ctx context.Context, formItem *schema.{{$name}}Form) (*schema.{{$name}}, error) {
 	{{lowerCamel $name}} := &schema.{{$name}}{
 		{{if $includeID}}ID:          util.NewXID(),{{end}}
@@ -160,7 +160,6 @@ func (a *{{$name}}) Create(ctx context.Context, formItem *schema.{{$name}}Form) 
 	return {{lowerCamel $name}}, nil
 }
 
-// Update the specified {{lowerSpace .Name}} in the data access object.
 func (a *{{$name}}) Update(ctx context.Context, id string, formItem *schema.{{$name}}Form) error {
 	{{lowerCamel $name}}, err := a.{{$name}}DAL.Get(ctx, id)
 	if err != nil {
@@ -257,7 +256,6 @@ func (a *{{$name}}) Update(ctx context.Context, id string, formItem *schema.{{$n
 	})
 }
 
-// Delete the specified {{lowerSpace .Name}} from the data access object.
 func (a *{{$name}}) Delete(ctx context.Context, id string) error {
 	{{- if $treeTpl}}
 	{{lowerCamel $name}}, err := a.{{$name}}DAL.Get(ctx, id)
