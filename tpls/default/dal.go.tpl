@@ -170,10 +170,16 @@ func (a *{{$name}}) Update(ctx context.Context, item *schema.{{$name}}, opts ...
     return errors.WithStack(result.Error)
 }
 
-func (a *{{$name}}) Updates(ctx context.Context, params *schema.{{$name}}QueryParam, item *schema.{{$name}}) error {
+func (a *{{$name}}) Updates(ctx context.Context, params *schema.{{$name}}QueryParam, item *schema.{{$name}}, opts ...schema.{{$name}}QueryOptions) error {
     db, err := a.where(ctx, Get{{$name}}DB(ctx, a.DB), params)
 	if err != nil {
 		return errors.WithStack(err)
+	}
+	opt := a.getQueryOption(opts...)
+	if len(opt.SelectFields) > 0 {
+		db = db.Select(opt.SelectFields)
+	} else {
+		db = db.Select("*").Omit("created_at")
 	}
 	result := db.Updates(item)
 	return errors.WithStack(result.Error)
