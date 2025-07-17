@@ -178,8 +178,6 @@ func (a *{{$name}}) Updates(ctx context.Context, params *schema.{{$name}}QueryPa
 	opt := a.getQueryOption(opts...)
 	if len(opt.SelectFields) > 0 {
 		db = db.Select(opt.SelectFields)
-	} else {
-		db = db.Select("*").Omit("created_at")
 	}
 	result := db.Updates(item)
 	return errors.WithStack(result.Error)
