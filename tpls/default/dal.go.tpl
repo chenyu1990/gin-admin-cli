@@ -8,6 +8,7 @@ import (
 	"{{.ModuleImportPath}}/schema"
 	"{{.RootImportPath}}/pkg/dbx"
 	"{{.RootImportPath}}/pkg/errors"
+	pkgSchema "{{.RootImportPath}}/pkg/schema"
 	"gorm.io/gorm"
 )
 
