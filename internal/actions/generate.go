@@ -263,7 +263,14 @@ func (a *GenerateAction) generate(ctx context.Context, dataItem *schema.S) error
 			if err != nil {
 				return err
 			}
-			err = a.write(ctx, dataItem.Module, dataItem.Name, parser.FileForModuleValidateSchema, tplJsonData, true)
+
+			tplValidateName := a.getGoTplFile("schema.validate", dataItem.TplType)
+			tplValidateData, err := a.fs.ParseTpl(tplValidateName, dataItem)
+			if err != nil {
+				a.logger.Errorf("Failed to parse tpl, err: %s, #struct %s, #tpl %s", err, dataItem.Name, tplName)
+				return err
+			}
+			err = a.write(ctx, dataItem.Module, dataItem.Name, parser.FileForModuleValidateSchema, tplValidateData, true)
 			if err != nil {
 				return err
 			}
