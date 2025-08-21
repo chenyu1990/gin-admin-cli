@@ -11,7 +11,6 @@ import (
 {{$includeSequence := .Include.Sequence}}
 {{$treeTpl := eq .TplType "tree"}}
 
-{{with .Comment}}// {{.}}{{else}}// Defining the `{{$name}}` struct.{{end}}
 type {{$name}} struct {
     {{- range .Fields}}{{$fieldName := .Name}}
 	{{- if eq .OnlyCond false}}
@@ -26,7 +25,6 @@ func (a {{$name}}) TableName() string {
 	return config.C.FormatTableName("{{lowerUnderline $name}}")
 }
 
-// Defining the query parameters for the `{{$name}}` struct.
 type {{$name}}QueryParam struct {
 	schema.PaginationParam
 	{{if $treeTpl}}InIDs []string `form:"-"`{{- end}}
@@ -46,18 +44,15 @@ func (a *{{$name}}QueryParam) String() string {
 	return string(bytes)
 }
 
-// Defining the query options for the `{{$name}}` struct.
 type {{$name}}QueryOptions struct {
 	schema.QueryOptions
 }
 
-// Defining the query result for the `{{$name}}` struct.
 type {{$name}}QueryResult struct {
 	Data       {{plural .Name}}
 	PageResult *schema.PaginationResult
 }
 
-// Defining the slice of `{{$name}}` struct.
 type {{plural .Name}} []*{{$name}}
 type {{$name}}Map map[{{.MapKeyType}}]*{{$name}}
 
@@ -132,7 +127,6 @@ func (a {{plural .Name}}) ToTree() {{plural .Name}} {
 }
 {{- end}}
 
-// Defining the data structure for creating a `{{$name}}` struct.
 type {{$name}}Form struct {
 	{{- range .Fields}}{{$fieldName := .Name}}{{$type :=.Type}}
 	{{- with .Form}}
@@ -141,12 +135,6 @@ type {{$name}}Form struct {
 	{{- end}}
 }
 
-// A validation function for the `{{$name}}Form` struct.
-func (a *{{$name}}Form) Validate() error {
-	return nil
-}
-
-// Convert `{{$name}}Form` to `{{$name}}` object.
 func (a *{{$name}}Form) FillTo({{lowerCamel $name}} *{{$name}}) error {
 	{{- range .Fields}}{{$fieldName := .Name}}
 	{{- with .Form}}

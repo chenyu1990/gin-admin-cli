@@ -263,6 +263,10 @@ func (a *GenerateAction) generate(ctx context.Context, dataItem *schema.S) error
 			if err != nil {
 				return err
 			}
+			err = a.write(ctx, dataItem.Module, dataItem.Name, parser.FileForModuleValidateSchema, tplJsonData, true)
+			if err != nil {
+				return err
+			}
 		case "dal":
 			if dataItem.Rewrite != nil && dataItem.Rewrite.Dal {
 				rewrite = true

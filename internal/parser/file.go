@@ -8,15 +8,16 @@ import (
 )
 
 const (
-	FileForMods             = "mods.go"
-	FileForModuleMain       = "{{lower .ModuleName}}/main.go"
-	FileForModuleWire       = "{{lower .ModuleName}}/wire.go"
-	FileForModuleAPI        = "{{lower .ModuleName}}/api/{{lowerUnderline .StructName}}.api.go"
-	FileForModuleBiz        = "{{lower .ModuleName}}/biz/{{lowerUnderline .StructName}}.biz.go"
-	FileForModuleDAL        = "{{lower .ModuleName}}/dal/{{lowerUnderline .StructName}}.dal.go"
-	FileForModuleDALStruct  = "{{lower .ModuleName}}/dal/{{lowerUnderline .StructName}}.struct.dal.go"
-	FileForModuleSchema     = "{{lower .ModuleName}}/schema/{{lowerUnderline .StructName}}.go"
-	FileForModuleJsonSchema = "{{lower .ModuleName}}/schema/{{lowerUnderline .StructName}}.json.go"
+	FileForMods                 = "mods.go"
+	FileForModuleMain           = "{{lower .ModuleName}}/main.go"
+	FileForModuleWire           = "{{lower .ModuleName}}/wire.go"
+	FileForModuleAPI            = "{{lower .ModuleName}}/api/{{lowerUnderline .StructName}}.api.go"
+	FileForModuleBiz            = "{{lower .ModuleName}}/biz/{{lowerUnderline .StructName}}.biz.go"
+	FileForModuleDAL            = "{{lower .ModuleName}}/dal/{{lowerUnderline .StructName}}.dal.go"
+	FileForModuleDALStruct      = "{{lower .ModuleName}}/dal/{{lowerUnderline .StructName}}.struct.dal.go"
+	FileForModuleSchema         = "{{lower .ModuleName}}/schema/{{lowerUnderline .StructName}}.go"
+	FileForModuleJsonSchema     = "{{lower .ModuleName}}/schema/{{lowerUnderline .StructName}}.json.go"
+	FileForModuleValidateSchema = "{{lower .ModuleName}}/schema/{{lowerUnderline .StructName}}.validate.go"
 )
 
 func ParseFilePathFromTpl(moduleName, structName string, tpl string) (string, error) {
