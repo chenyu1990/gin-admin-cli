@@ -231,6 +231,8 @@ func (a *Field) Format() *Field {
 					query.FormTag = utils.ToLowerUnderlinedNamer(query.Name)
 				}
 			}
+
+			query.FormTag = strings.ReplaceAll(query.FormTag, "id_s", "ids")
 		}
 	}
 
