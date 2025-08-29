@@ -232,7 +232,12 @@ func (a *Field) Format() *Field {
 				}
 			}
 
-			query.FormTag = strings.ReplaceAll(query.FormTag, "id_s", "ids")
+			fields := strings.Split(query.FormTag, "_")
+			if l := len(fields); l > 0 {
+				if s := fields[l-1]; s == "s" {
+					query.FormTag = strings.ReplaceAll(query.FormTag, "_s", "s")
+				}
+			}
 		}
 	}
 
