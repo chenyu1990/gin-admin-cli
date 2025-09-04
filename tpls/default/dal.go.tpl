@@ -82,7 +82,7 @@ func (a *{{$name}}) Query(ctx context.Context, params schema.{{$name}}QueryParam
 		return nil, err
 	}
 
-	var list schema.{{plural .Name}}
+	list := schema.{{plural .Name}}{}
 	pageResult, err := dbx.WrapPageQuery(ctx, db, params.PaginationParam, opt.QueryOptions, &list)
 	if err != nil {
 		return nil, errors.WithStack(err)
