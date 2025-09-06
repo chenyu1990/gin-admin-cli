@@ -42,6 +42,7 @@ func (a *{{$name}}) where(ctx context.Context, db *gorm.DB, params *schema.{{$na
 		db = db.Where("`id` IN (?)", v)
 	}
     {{- range .Fields}}{{$type := .Type}}{{$fieldName := .Name}}
+    {{- if not .OnlyQueryParam}}
     {{- range .Query}}
     {{- with .}}
 	if v := params.{{.Name}}; {{with .IfCond}}{{.}}{{else}}{{convIfCond $type}}{{end}} {
@@ -54,6 +55,13 @@ func (a *{{$name}}) where(ctx context.Context, db *gorm.DB, params *schema.{{$na
     {{- end}}
     {{- end}}
     {{- end}}
+    {{- end}}
+
+	var err error
+	db, err = a.whereX(ctx, db, params, opts...)
+	if err != nil {
+		return nil, err
+	}
 
 	if params.Pagination == false {
 		for _, opt := range opts {

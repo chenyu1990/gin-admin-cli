@@ -137,18 +137,19 @@ type Rewrite struct {
 }
 
 type Field struct {
-	Name      string                 `yaml:"name,omitempty" json:"name,omitempty"`
-	OnlyCond  bool                   `yaml:"only_cond,omitempty" json:"only_cond,omitempty"`
-	Type      string                 `yaml:"type,omitempty" json:"type,omitempty"`
-	GormTag   string                 `yaml:"gorm_tag,omitempty" json:"gorm_tag,omitempty"`
-	JSONTag   string                 `yaml:"json_tag,omitempty" json:"json_tag,omitempty"`
-	CustomTag string                 `yaml:"custom_tag,omitempty" json:"custom_tag,omitempty"`
-	Comment   string                 `yaml:"comment,omitempty" json:"comment,omitempty"`
-	Query     []*FieldQuery          `yaml:"query,omitempty" json:"query,omitempty"`
-	Order     string                 `yaml:"order,omitempty" json:"order,omitempty"`
-	Form      *FieldForm             `yaml:"form,omitempty" json:"form,omitempty"`
-	Unique    bool                   `yaml:"unique,omitempty" json:"unique,omitempty"`
-	Extra     map[string]interface{} `yaml:"extra,omitempty" json:"extra,omitempty"`
+	Name           string                 `yaml:"name,omitempty" json:"name,omitempty"`
+	OnlyCond       bool                   `yaml:"only_cond,omitempty" json:"only_cond,omitempty"`
+	OnlyQueryParam bool                   `yaml:"only_query_param,omitempty" json:"only_query_param,omitempty"`
+	Type           string                 `yaml:"type,omitempty" json:"type,omitempty"`
+	GormTag        string                 `yaml:"gorm_tag,omitempty" json:"gorm_tag,omitempty"`
+	JSONTag        string                 `yaml:"json_tag,omitempty" json:"json_tag,omitempty"`
+	CustomTag      string                 `yaml:"custom_tag,omitempty" json:"custom_tag,omitempty"`
+	Comment        string                 `yaml:"comment,omitempty" json:"comment,omitempty"`
+	Query          []*FieldQuery          `yaml:"query,omitempty" json:"query,omitempty"`
+	Order          string                 `yaml:"order,omitempty" json:"order,omitempty"`
+	Form           *FieldForm             `yaml:"form,omitempty" json:"form,omitempty"`
+	Unique         bool                   `yaml:"unique,omitempty" json:"unique,omitempty"`
+	Extra          map[string]interface{} `yaml:"extra,omitempty" json:"extra,omitempty"`
 }
 
 func (a *Field) Format() *Field {

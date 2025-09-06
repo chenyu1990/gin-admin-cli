@@ -13,7 +13,7 @@ import (
 
 type {{$name}} struct {
     {{- range .Fields}}{{$fieldName := .Name}}
-	{{- if eq .OnlyCond false}}
+	{{- if and (not .OnlyCond) (not .OnlyQueryParam)}}
     {{- if .Name}}
 	{{$fieldName}} {{.Type}} `json:"{{if ne .JSONTag "-"}}{{.JSONTag}},omitempty{{else}}-{{end}}"{{with .GormTag}} gorm:"{{.}}"{{end}}{{with .CustomTag}} {{raw .}}{{end}}`{{with .Comment}}// {{.}}{{end}}
 	{{- end}}
