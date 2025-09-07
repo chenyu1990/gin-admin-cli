@@ -157,6 +157,8 @@ func (a *{{$name}}) Create(ctx context.Context, formItem *schema.{{$name}}Form) 
 	if err != nil {
 		return nil, err
 	}
+
+	a.{{$name}}DAL.ResetMap()
 	return {{lowerCamel $name}}, nil
 }
 
@@ -228,7 +230,7 @@ func (a *{{$name}}) Update(ctx context.Context, id string, formItem *schema.{{$n
 	}
     {{if $includeUpdatedAt}}{{lowerCamel $name}}.UpdatedAt = time.Now(){{end}}
 	
-	return a.Trans.Exec(ctx, func(ctx context.Context) error {
+	err = a.Trans.Exec(ctx, func(ctx context.Context) error {
 		if err := a.{{$name}}DAL.Update(ctx, {{lowerCamel $name}}); err != nil {
 			return err
 		}
@@ -254,6 +256,12 @@ func (a *{{$name}}) Update(ctx context.Context, id string, formItem *schema.{{$n
 		{{- end}}
 		return nil
 	})
+	if err != nil {
+		return err
+	}
+
+	a.{{$name}}DAL.ResetMap()
+	return nil
 }
 
 func (a *{{$name}}) Delete(ctx context.Context, id string) error {
@@ -284,7 +292,7 @@ func (a *{{$name}}) Delete(ctx context.Context, id string) error {
 	}
 	{{- end}}
 
-	return a.Trans.Exec(ctx, func(ctx context.Context) error {
+	err = a.Trans.Exec(ctx, func(ctx context.Context) error {
 		if err := a.{{$name}}DAL.Delete(ctx, id); err != nil {
 			return err
 		}
@@ -297,4 +305,10 @@ func (a *{{$name}}) Delete(ctx context.Context, id string) error {
 		{{- end}}
 		return nil
 	})
+	if err != nil {
+		return err
+	}
+
+	a.OrderCategoryDAL.ResetMap()
+	return nil
 }

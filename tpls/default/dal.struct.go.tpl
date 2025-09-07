@@ -18,6 +18,11 @@ type {{.Name}} struct {
 	cacheMap map[string]*cache{{.Name}} `wire:"-"`
 }
 
+func (a *{{.Name}}) ResetMap() {
+	a.cacheMap = nil
+}
+
+
 func (a *{{.Name}}) where(ctx context.Context, db *gorm.DB, params *schema.{{.Name}}QueryParam, opts ...schema.{{.Name}}QueryOptions) (*gorm.DB, error) {
 	return db, nil
 }
