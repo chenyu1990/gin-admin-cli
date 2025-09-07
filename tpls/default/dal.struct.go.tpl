@@ -1,6 +1,7 @@
 package dal
 
 import (
+	"context"
 	"time"
 
 	"{{.ModuleImportPath}}/schema"
