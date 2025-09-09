@@ -175,6 +175,9 @@ func (a *{{$name}}) Update(ctx context.Context, item *schema.{{$name}}, opts ...
 	} else {
 		db = db.Select("*").Omit("created_at")
 	}
+	if len(opt.OmitFields) > 0 {
+		db = db.Omit(opt.OmitFields...)
+	}
 	result := db.Updates(item)
     return errors.WithStack(result.Error)
 }
@@ -187,6 +190,9 @@ func (a *{{$name}}) Updates(ctx context.Context, params *schema.{{$name}}QueryPa
 	opt := a.getQueryOption(opts...)
 	if len(opt.SelectFields) > 0 {
 		db = db.Select(opt.SelectFields)
+	}
+	if len(opt.OmitFields) > 0 {
+		db = db.Omit(opt.OmitFields...)
 	}
 	result := db.Updates(item)
 	return errors.WithStack(result.Error)
