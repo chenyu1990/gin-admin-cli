@@ -309,6 +309,6 @@ func (a *{{$name}}) Delete(ctx context.Context, id string) error {
 		return err
 	}
 
-	a.OrderCategoryDAL.ResetMap()
+	a.{{$name}}DAL.ResetMap()
 	return nil
 }

@@ -22,6 +22,6 @@ func (a *{{.Name}}) ResetMap() {
 	a.cacheMap = nil
 }
 
-func (a *{{.Name}}) where(ctx context.Context, db *gorm.DB, params *schema.{{.Name}}QueryParam, opts ...schema.{{.Name}}QueryOptions) (*gorm.DB, error) {
+func (a *{{.Name}}) whereX(ctx context.Context, db *gorm.DB, params *schema.{{.Name}}QueryParam, opts ...schema.{{.Name}}QueryOptions) (*gorm.DB, error) {
 	return db, nil
 }
