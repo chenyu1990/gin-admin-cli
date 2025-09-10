@@ -212,6 +212,20 @@ func (a *{{$name}}) Deletes(ctx context.Context, params *schema.{{$name}}QueryPa
 	return errors.WithStack(result.Error)
 }
 
+func (a *{{$name}}) Select(ctx context.Context, params schema.{{$name}}QueryParam, selectQuery string, output interface{}) error {
+	db := Get{{$name}}DB(ctx, a.DB).Select(selectQuery)
+	db, err := a.where(ctx, db, &params)
+	if err != nil {
+		return err
+	}
+
+	result := db.Find(output)
+	if result.Error != nil {
+		return errors.WithStack(result.Error)
+	}
+	return nil
+}
+
 func (a *{{$name}}) GetMap(ctx context.Context, params *schema.{{$name}}QueryParam) (schema.{{$name}}Map, error) {
 	now := time.Now()
 	cacheKey := fmt.Sprintf("%s", params)
