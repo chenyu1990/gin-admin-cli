@@ -18,10 +18,13 @@ var FuncMap = template.FuncMap{
 	"lowerCamel":         ToLowerCamel,
 	"lowerSpace":         ToLowerSpacedNamer,
 	"titleSpace":         ToTitleSpaceNamer,
-	"convIfCond":         tplConvToIfCond,
-	"convSwaggerType":    tplConvToSwaggerType,
-	"contains":           func(s string, sub string) bool { return strings.Contains(s, sub) },
-	"raw":                func(s string) template.HTML { return template.HTML(s) },
+	"replace": func(s, old, new string, n int) string {
+		return strings.Replace(s, old, new, n)
+	},
+	"convIfCond":      tplConvToIfCond,
+	"convSwaggerType": tplConvToSwaggerType,
+	"contains":        func(s string, sub string) bool { return strings.Contains(s, sub) },
+	"raw":             func(s string) template.HTML { return template.HTML(s) },
 	"convGoTypeToTsType": func(goType string) string {
 		if strings.Contains(goType, "int") || strings.Contains(goType, "float") {
 			return "number"

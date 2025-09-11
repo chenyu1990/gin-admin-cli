@@ -33,7 +33,7 @@ type {{$name}}QueryParam struct {
 	{{- range .Fields}}{{$fieldName := .Name}}
 	{{- range .Query}}
 	{{- with .}}
-	{{.Name}} {{.Type}} `form:"{{with .FormTag}}{{.}}{{else}}-{{end}}"{{with .BindingTag}} binding:"{{.}}"{{end}}{{with .CustomTag}} {{raw .}}{{end}}`{{with .Comment}}// {{.}}{{end}}
+	{{.Name}} {{replace .Type "*" "" -1}} `form:"{{with .FormTag}}{{.}}{{else}}-{{end}}"{{with .BindingTag}} binding:"{{.}}"{{end}}{{with .CustomTag}} {{raw .}}{{end}}`{{with .Comment}}// {{.}}{{end}}
 	{{- end}}
 	{{- end}}
 	{{- end}}
