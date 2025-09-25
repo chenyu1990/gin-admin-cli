@@ -45,6 +45,8 @@ func tplConvToIfCond(t string) template.HTML {
 		cond = `v != 0`
 	} else if strings.Contains(t, "float") {
 		cond = `v != 0`
+	} else if strings.Contains(t, "bool") {
+		cond = `v`
 	} else if t == "time.Time" {
 		cond = `!v.IsZero()`
 	}
