@@ -226,43 +226,6 @@ func (a *{{$name}}) Select(ctx context.Context, params schema.{{$name}}QueryPara
 	return nil
 }
 
-func (a *{{$name}}) GetMap(ctx context.Context, params *schema.{{$name}}QueryParam) (schema.{{$name}}Map, error) {
-	now := time.Now()
-	cacheKey := fmt.Sprintf("%s", params)
-	if a.cacheMap == nil {
-		a.cacheMap = make(map[string]*cache{{$name}})
-	}
-	if a.cacheMap[cacheKey] != nil && a.cacheMap[cacheKey].Time.Add({{.MapKeyCacheTime}}*time.Second).After(now) {
-		return a.cacheMap[cacheKey].Map, nil
-	}
-
-	{{lowerCamel .Name}}QueryResult, err := a.Query(ctx, *params, schema.{{$name}}QueryOptions{
-		QueryOptions: pkgSchema.QueryOptions{
-			OrderFields: []pkgSchema.OrderField{
-				//{Field: "sequence", Direction: pkgSchema.DESC},
-			},
-		},
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	{{lowerCamel .Name}}Map := make(schema.{{$name}}Map)
-	for _, {{lowerCamel .Name}} := range {{lowerCamel .Name}}QueryResult.Data {
-        {{- if contains .MapKeyFieldName "."}}
-		    {{lowerCamel .Name}}Map[{{.MapKeyFieldName}}] = {{lowerCamel .Name}}
-        {{- else}}
-		    {{lowerCamel .Name}}Map[{{lowerCamel .Name}}.{{.MapKeyFieldName}}] = {{lowerCamel .Name}}
-        {{- end}}
-	}
-
-    a.cacheMap[cacheKey] = &cache{{$name}}{
-        Map:  {{lowerCamel .Name}}Map,
-        Time: now,
-    }
-	return {{lowerCamel .Name}}Map, nil
-}
-
 {{- if $treeTpl}}
 // Updates the parent path of the specified {{lowerSpace .Name}}.
 func (a *{{$name}}) UpdateParentPath(ctx context.Context, id, parentPath string) error {

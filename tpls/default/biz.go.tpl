@@ -158,7 +158,7 @@ func (a *{{$name}}) Create(ctx context.Context, formItem *schema.{{$name}}Form) 
 		return nil, err
 	}
 
-	a.{{$name}}DAL.ResetMap()
+	a.{{$name}}DAL.CacheSet(ctx, {{lowerCamel $name}}.ID, {{lowerCamel $name}})
 	return {{lowerCamel $name}}, nil
 }
 
@@ -260,7 +260,7 @@ func (a *{{$name}}) Update(ctx context.Context, id string, formItem *schema.{{$n
 		return err
 	}
 
-	a.{{$name}}DAL.ResetMap()
+	a.{{$name}}DAL.CacheSet(ctx, {{lowerCamel $name}}.ID, {{lowerCamel $name}})
 	return nil
 }
 
@@ -309,6 +309,6 @@ func (a *{{$name}}) Delete(ctx context.Context, id string) error {
 		return err
 	}
 
-	a.{{$name}}DAL.ResetMap()
+	a.{{$name}}DAL.CacheRemove(ctx, id)
 	return nil
 }
