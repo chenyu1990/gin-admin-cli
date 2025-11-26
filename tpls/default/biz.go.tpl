@@ -35,6 +35,7 @@ func (a *{{$name}}) Query(ctx context.Context, params schema.{{$name}}QueryParam
 				{{- end}}
                 {{- end}}
 			},
+			MustWhere: true,
 		},
 	})
 	if err != nil {

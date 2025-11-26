@@ -43,6 +43,11 @@ func (a *{{.Name}}) CacheRemove(ctx context.Context, id {{.MapKeyType}}) {
 	a.cacheInit(ctx)
 	a.cacheMap.Delete(id)
 }
+
+func (a *{{.Name}}) CacheRange(ctx context.Context, f func(key, value any) bool) {
+	a.cacheInit(ctx)
+	a.cacheMap.Range(f)
+}
 {{- end}}
 
 func (a *{{.Name}}) whereX(ctx context.Context, db *gorm.DB, params *schema.{{.Name}}QueryParam, opts ...schema.{{.Name}}QueryOptions) (*gorm.DB, error) {
