@@ -54,7 +54,9 @@ type {{$name}}QueryResult struct {
 }
 
 type {{plural .Name}} []*{{$name}}
+{{- if .MapKeyType }}
 type {{$name}}Map map[{{.MapKeyType}}]*{{$name}}
+{{- end }}
 
 {{- if $includeSequence}}
 func (a {{plural .Name}}) Len() int {

@@ -11,7 +11,7 @@ import (
 type {{.Name}} struct {
 	DB *gorm.DB
 	{{- if .MapKeyType }}
-	cacheMap map[string]*cache{{.Name}} `wire:"-"`
+	cacheMap *sync.Map `wire:"-"`
 	{{- end }}
 }
 
