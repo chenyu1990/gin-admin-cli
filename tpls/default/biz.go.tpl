@@ -159,7 +159,9 @@ func (a *{{$name}}) Create(ctx context.Context, formItem *schema.{{$name}}Form) 
 		return nil, err
 	}
 
-	a.{{$name}}DAL.CacheSet(ctx, {{lowerCamel $name}}.ID, {{lowerCamel $name}})
+	{{- if .MapKeyType }}
+	a.{{$name}}DAL.CacheSet(ctx, {{lowerCamel $name}})
+	{{- end}}
 	return {{lowerCamel $name}}, nil
 }
 
@@ -261,7 +263,9 @@ func (a *{{$name}}) Update(ctx context.Context, id string, formItem *schema.{{$n
 		return err
 	}
 
-	a.{{$name}}DAL.CacheSet(ctx, {{lowerCamel $name}}.ID, {{lowerCamel $name}})
+	{{- if .MapKeyType }}
+	a.{{$name}}DAL.CacheSet(ctx, {{lowerCamel $name}})
+	{{- end}}
 	return nil
 }
 

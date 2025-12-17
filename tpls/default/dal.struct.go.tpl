@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 	"sync"
+	"{{.ModuleImportPath}}/schema"
 
 	"gorm.io/gorm"
 )
@@ -21,6 +22,16 @@ func (a *{{.Name}}) cacheInit(ctx context.Context) {
 		return
 	}
 
+    {{lowerCamel .Name}}QueryResult, err := a.Query(ctx, schema.{{.Name}}QueryParam{})
+    if err != nil {
+        logging.Context(ctx).Error("{{.Name}}.cacheInit Query error: ", zap.Error(err))
+        return
+    }
+
+    for _, {{lowerCamel .Name}} := range {{lowerCamel .Name}}QueryResult.Data {
+        a.cacheMap.Store({{lowerCamel .Name}}.TelegramId, {{lowerCamel .Name}})
+    }
+
 	a.cacheMap = &sync.Map{}
 }
 
@@ -34,9 +45,9 @@ func (a *{{.Name}}) CacheGet(ctx context.Context, id {{.MapKeyType}}) *schema.{{
 	return value.(*schema.{{.Name}})
 }
 
-func (a *{{.Name}}) CacheSet(ctx context.Context, id {{.MapKeyType}}, user *schema.{{.Name}}) {
+func (a *{{.Name}}) CacheSet(ctx context.Context, {{lowerCamel .Name}} *schema.{{.Name}}) {
 	a.cacheInit(ctx)
-	a.cacheMap.Store(id, user)
+	a.cacheMap.Store({{.MapKeyFieldName}}, {{lowerCamel .Name}})
 }
 
 func (a *{{.Name}}) CacheRemove(ctx context.Context, id {{.MapKeyType}}) {
