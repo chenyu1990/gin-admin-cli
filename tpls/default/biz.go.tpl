@@ -314,6 +314,8 @@ func (a *{{$name}}) Delete(ctx context.Context, id string) error {
 		return err
 	}
 
+	{{- if .MapKeyType }}
 	a.{{$name}}DAL.CacheRemove(ctx, id)
+	{{- end}}
 	return nil
 }
