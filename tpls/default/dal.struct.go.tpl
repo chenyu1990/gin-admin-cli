@@ -2,10 +2,12 @@ package dal
 
 import (
 	"context"
-	"time"
-	"sync"
+	"fmt"
 	"{{.ModuleImportPath}}/schema"
+	"{{.RootImportPath}}/pkg/logging"
+	"sync"
 
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
