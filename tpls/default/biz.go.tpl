@@ -298,7 +298,7 @@ func (a *{{$name}}) Delete(ctx context.Context, id string) error {
 	{{- end}}
 
 	err = a.Trans.Exec(ctx, func(ctx context.Context) error {
-		if err := a.{{$name}}DAL.Delete(ctx, id); err != nil {
+		if _, err := a.{{$name}}DAL.Delete(ctx, id); err != nil {
 			return err
 		}
 		{{- if $treeTpl}}
