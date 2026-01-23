@@ -157,6 +157,16 @@ func (a *{{$name}}) Exists{{.Name}}(ctx context.Context, {{lowerCamel .Name}} st
 {{- end}}
 {{- end}}
 
+func (a *{{$name}}) ExistSearch(ctx context.Context, params *schema.{{$name}}QueryParam) (bool, error) {
+	db := Get{{$name}}DB(ctx, a.DB)
+	db, err := a.where(ctx, db, params)
+	if err != nil {
+		return false, errors.WithStack(err)
+	}
+	ok, err := dbx.Exists(ctx, db)
+	return ok, errors.WithStack(err)
+}
+
 func (a *{{$name}}) Create(ctx context.Context, item *schema.{{$name}}, opts ...schema.{{$name}}QueryOptions) error {
     db := Get{{$name}}DB(ctx, a.DB)
 	opt := a.getQueryOption(opts...)
@@ -198,18 +208,18 @@ func (a *{{$name}}) Updates(ctx context.Context, params *schema.{{$name}}QueryPa
 	return errors.WithStack(result.Error)
 }
 
-func (a *{{$name}}) Delete(ctx context.Context, id string) error {
+func (a *{{$name}}) Delete(ctx context.Context, id string) (int64, error) {
 	result := Get{{$name}}DB(ctx, a.DB).Where("id=?", id).Delete(new(schema.{{$name}}))
-	return errors.WithStack(result.Error)
+	return result.RowsAffected, errors.WithStack(result.Error)
 }
 
-func (a *{{$name}}) Deletes(ctx context.Context, params *schema.{{$name}}QueryParam) error {
+func (a *{{$name}}) Deletes(ctx context.Context, params *schema.{{$name}}QueryParam) (int64, error) {
     db, err := a.where(ctx, Get{{$name}}DB(ctx, a.DB), params)
 	if err != nil {
-		return errors.WithStack(err)
+		return 0, errors.WithStack(err)
 	}
 	result := db.Delete(new(schema.{{$name}}))
-	return errors.WithStack(result.Error)
+	return result.RowsAffected, errors.WithStack(result.Error)
 }
 
 func (a *{{$name}}) Select(ctx context.Context, params schema.{{$name}}QueryParam, selectQuery string, output interface{}) error {

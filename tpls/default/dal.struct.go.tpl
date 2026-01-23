@@ -23,6 +23,7 @@ func (a *{{.Name}}) cacheInit(ctx context.Context) {
 	if a.cacheMap != nil {
 		return
 	}
+	a.cacheMap = &sync.Map{}
 
     {{lowerCamel .Name}}QueryResult, err := a.Query(ctx, schema.{{.Name}}QueryParam{})
     if err != nil {
@@ -31,17 +32,15 @@ func (a *{{.Name}}) cacheInit(ctx context.Context) {
     }
 
     for _, {{lowerCamel .Name}} := range {{lowerCamel .Name}}QueryResult.Data {
-        a.cacheMap.Store({{lowerCamel .Name}}.TelegramId, {{lowerCamel .Name}})
+        a.cacheMap.Store({{.MapKeyFieldName}}, {{lowerCamel .Name}})
     }
-
-	a.cacheMap = &sync.Map{}
 }
 
 func (a *{{.Name}}) CacheGet(ctx context.Context, id {{.MapKeyType}}) *schema.{{.Name}} {
 	a.cacheInit(ctx)
 	value, ok := a.cacheMap.Load(id)
 	if !ok {
-		return &schema.{{.Name}}{}
+		return nil
 	}
 
 	return value.(*schema.{{.Name}})
