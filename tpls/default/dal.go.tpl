@@ -222,11 +222,15 @@ func (a *{{$name}}) Deletes(ctx context.Context, params *schema.{{$name}}QueryPa
 	return result.RowsAffected, errors.WithStack(result.Error)
 }
 
-func (a *{{$name}}) Select(ctx context.Context, params schema.{{$name}}QueryParam, selectQuery string, output interface{}) error {
+func (a *{{$name}}) Select(ctx context.Context, params schema.{{$name}}QueryParam, selectQuery string, output interface{}, opts ...pkgSchema.QueryOptions) error {
 	db := Get{{$name}}DB(ctx, a.DB).Select(selectQuery)
 	db, err := a.where(ctx, db, &params)
 	if err != nil {
 		return err
+	}
+	if len(opts) > 0 {
+		queryOptions := opts[0]
+		db = dbx.WrapQueryOptions(db, queryOptions)
 	}
 
 	result := db.Find(output)
