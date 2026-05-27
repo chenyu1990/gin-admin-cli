@@ -25,7 +25,7 @@ func (a *{{$name}}) MarshalJSON() ([]byte, error) {
         {{- range .Fields}}{{$fieldName := .Name}}
 	        {{- if eq .OnlyCond false}}
             {{- if eq .Type "time.Time"}}
-                {{$fieldName}} *{{.Type}} `json:"{{.JSONTag}},omitempty"` {{with .Comment}}// {{.}}{{end}}
+                {{$fieldName}} *{{.Type}} `json:"{{if ne .JSONTag "-"}}{{if ne .JSONTag ""}}{{.JSONTag}}{{else}}{{lowerUnderline $fieldName}},omitempty{{end}}{{end}}"` {{with .Comment}}// {{.}}{{end}}
             {{- end}}
             {{- end}}
         {{- end}}

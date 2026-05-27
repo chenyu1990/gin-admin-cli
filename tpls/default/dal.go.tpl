@@ -68,7 +68,8 @@ func (a *{{$name}}) where(ctx context.Context, db *gorm.DB, params *schema.{{$na
 			if opt.MustWhere {
 				_, ok := db.Statement.Clauses["WHERE"]
 				if !ok {
-					return nil, errors.BadRequest("", fmt.Sprintf("%s 必须有查询条件", schema.{{$name}}{}.TableName()))
+					item := &schema.{{$name}}{}
+					return nil, errors.BadRequest("", fmt.Sprintf("%s 必须有查询条件", item.TableName()))
 				}
 				break
 			}

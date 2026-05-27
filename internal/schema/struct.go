@@ -86,14 +86,14 @@ func (a *S) Format() *S {
 		fields = append(fields, &Field{
 			Name:    "CreatedAt",
 			Type:    "time.Time",
-			GormTag: "index;",
+			GormTag: "index;autoCreateTime",
 			Comment: "Create time",
 			Order:   "DESC",
 		})
 		fields = append(fields, &Field{
 			Name:    "UpdatedAt",
 			Type:    "time.Time",
-			GormTag: "index;",
+			GormTag: "index;autoUpdateTime",
 			Comment: "Update time",
 		})
 		a.Fields = fields
