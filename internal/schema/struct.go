@@ -155,6 +155,11 @@ func (a *Field) Format() *Field {
 				a.JSONTag = strings.Join(vv, ",")
 			}
 		}
+	} else {
+		switch a.Type {
+		case "int64", "uint64":
+			a.JSONTag = utils.ToLowerUnderlinedNamer(a.Name) + ",string"
+		}
 	}
 
 	for _, query := range a.Query {
