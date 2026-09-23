@@ -15,7 +15,7 @@ type {{$name}} struct {
     {{- range .Fields}}{{$fieldName := .Name}}
 	{{- if and (not .OnlyCond) (not .OnlyQueryParam)}}
     {{- if .Name}}
-	{{$fieldName}} {{.Type}} `json:"{{if ne .JSONTag "-"}}{{if ne .JSONTag ""}}{{.JSONTag}}{{else}}{{lowerUnderline $fieldName}},omitempty{{end}}{{else}}-{{end}}"{{with .GormTag}} gorm:"{{.}}"{{end}}{{with .CustomTag}} {{raw .}}{{end}}`{{with .Comment}}// {{.}}{{end}}
+	{{$fieldName}} {{.Type}} `json:"{{if ne .JSONTag "-"}}{{if ne .JSONTag ""}}{{.JSONTag}}{{else}}{{lowerUnderline $fieldName}}{{end}}{{else}}-{{end}}"{{with .GormTag}} gorm:"{{.}}"{{end}}{{with .CustomTag}} {{raw .}}{{end}}`{{with .Comment}}// {{.}}{{end}}
 	{{- end}}
 	{{- end}}
 	{{- end}}
