@@ -45,7 +45,7 @@ func (a *{{$name}}) where(ctx context.Context, db *gorm.DB, params *schema.{{$na
     {{- if not .OnlyQueryParam}}
     {{- range .Query}}
     {{- with .}}
-	if v := params.{{.Name}}; {{with .IfCond}}{{.}}{{else}}{{convIfCond $type}}{{end}} {
+	if v := params.{{.Name}}; {{with .IfCond}}{{.}}{{else}}{{convIfCond .Type}}{{end}} {
 	    {{- if .Where}}
 		db = db.Where("{{.Where}}", {{.Value}})
 	    {{- else}}
